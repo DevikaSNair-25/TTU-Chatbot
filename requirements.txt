@@ -1,0 +1,12 @@
+﻿flask
+line-bot-sdk
+langchain
+langchain-community
+langchain-groq
+langchain-text-splitters
+chromadb
+sentence-transformers
+requests
+beautifulsoup4
+python-dotenv
+groq
