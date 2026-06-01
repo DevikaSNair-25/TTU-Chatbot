@@ -1,33 +1,25 @@
 import os
 from langchain_community.vectorstores import Chroma
 from langchain_groq import ChatGroq
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.embeddings import FakeEmbeddings
 
 llm = ChatGroq(
     api_key=os.environ.get("GROQ_API_KEY"),
     model_name="llama-3.3-70b-versatile"
 )
 
-embedding = HuggingFaceEmbeddings(
-    model_name="all-MiniLM-L6-v2",
-    model_kwargs={"device": "cpu"},
-    encode_kwargs={"batch_size": 1}
-)
-
+embedding = FakeEmbeddings(size=384)
 db = Chroma(persist_directory="vectordb", embedding_function=embedding)
-retriever = db.as_retriever(search_kwargs={"k": 2})
+retriever = db.as_retriever()
 
 def ask(question):
-    docs = retriever.invoke(question)
-    context = "\n\n".join([doc.page_content for doc in docs])
-
     prompt = f"""You are a helpful assistant for TTU (Tatung University of Technology) in Taiwan.
-Use the following context to answer the question.
-Always answer in English even if the context is in Chinese.
-If you cannot find the answer in the context, say "I don't have that information."
-
-Context:
-{context}
+TTU is located at No.40, Sec. 3, Zhongshan N. Rd., Taipei City 104, Taiwan.
+TTU offers programs in Engineering, Management, and Design.
+TTU phone: +886-2-2182-2928
+TTU is a private teaching and research university.
+Always answer in English.
+If you don't know, say "I don't have that information."
 
 Question: {question}
 Answer:"""
